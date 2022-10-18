@@ -23,7 +23,7 @@ class QuerydslApplicationTests {
 
     @Test
     void contextLoads() {
-        Member member = new Member();
+        Member member = new Member("geombong", 10, null);
         em.persist(member);
 
         JPAQueryFactory query = new JPAQueryFactory(em);
