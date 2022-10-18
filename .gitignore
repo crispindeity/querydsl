@@ -254,3 +254,8 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# QClass
+generated
+
+# Yml
+application-local.yml
