@@ -1,6 +1,5 @@
 package study.querydsl;
 
-import static com.querydsl.jpa.JPAExpressions.select;
 import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
 import static study.querydsl.entity.QTeam.team;
@@ -27,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 import study.querydsl.dto.MemberDto;
+import study.querydsl.dto.QMemberDto;
 import study.querydsl.dto.UserDto;
 import study.querydsl.entity.Member;
 import study.querydsl.entity.QMember;
@@ -322,7 +322,7 @@ class QuerydslBasicTest {
         List<Member> result = queryFactory
                 .selectFrom(member)
                 .where(member.age.eq(
-                        select(memberSub.age.max())
+                        JPAExpressions.select(memberSub.age.max())
                                 .from(memberSub)
                 ))
                 .fetch();
@@ -340,7 +340,7 @@ class QuerydslBasicTest {
         List<Member> result = queryFactory
                 .selectFrom(member)
                 .where(member.age.goe(
-                        select(memberSub.age.avg())
+                        JPAExpressions.select(memberSub.age.avg())
                                 .from(memberSub)
                 ))
                 .fetch();
@@ -355,7 +355,7 @@ class QuerydslBasicTest {
         List<Member> result = queryFactory
                 .selectFrom(member)
                 .where(member.age.in(
-                        select(memberSub.age)
+                        JPAExpressions.select(memberSub.age)
                                 .from(memberSub)
                                 .where(memberSub.age.gt(10))
                 ))
@@ -370,7 +370,7 @@ class QuerydslBasicTest {
 
         List<Tuple> result = queryFactory
                 .select(member.username,
-                        select(memberSub.age.avg())
+                        JPAExpressions.select(memberSub.age.avg())
                                 .from(memberSub))
                 .from(member)
                 .fetch();
@@ -548,6 +548,18 @@ class QuerydslBasicTest {
 
         for (UserDto result : results) {
             System.out.println("result = " + result);
+        }
+    }
+
+    @Test
+    void findDtoByQueryProjection() {
+        List<MemberDto> fetch = queryFactory
+                .select(new QMemberDto(member.username, member.age))
+                .from(member)
+                .fetch();
+
+        for (MemberDto memberDto : fetch) {
+            System.out.println("memberDto = " + memberDto);
         }
     }
 }
