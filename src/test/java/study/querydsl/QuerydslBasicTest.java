@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static study.querydsl.entity.QMember.member;
 import static study.querydsl.entity.QTeam.team;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -561,5 +563,33 @@ class QuerydslBasicTest {
         for (MemberDto memberDto : fetch) {
             System.out.println("memberDto = " + memberDto);
         }
+    }
+
+    @Test
+    void dynamicQuery_BooleanBuilder() {
+        String usernameParam = "member1";
+        Integer ageParam = 10;
+
+        List<Member> result = searchMember1(usernameParam, ageParam);
+
+        assertThat(result).hasSize(1);
+    }
+
+    private List<Member> searchMember1(String usernameCond, Integer ageCond) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (StringUtils.hasText(usernameCond)) {
+            booleanBuilder.and(member.username.eq(usernameCond));
+        }
+
+        if (StringUtils.hasText(String.valueOf(ageCond))) {
+            booleanBuilder.and(member.age.eq(ageCond));
+        }
+
+        return queryFactory
+                .selectFrom(member)
+                .where()
+                .fetch();
+
     }
 }
