@@ -126,6 +126,5 @@ class MemberRepositoryTest {
         for (Member m : result) {
             System.out.println("m = " + m);
         }
-
     }
 }
